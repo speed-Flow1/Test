@@ -12,8 +12,7 @@ def process_video(path):
 
     width = 1920
     height = 1080
-    count_inc = 300
-    values_1 = []
+    count_inc = 280
     frames = []
     while cap.isOpened():
         ret, frame = cap.read()
@@ -27,18 +26,10 @@ def process_video(path):
 
             frames.append(frame)
         else:
-            print(count)
             cap.release()
             break
 
-    print('len frames ==', len(frames))
-
-
     results = model.predict(frames)
-
-    print('len results ==', len(results))
-
-
 
     masks = []
     for result in results:
@@ -47,14 +38,9 @@ def process_video(path):
         else:
             masks.append(None)
 
-
-
-    print('len masks ==', len(masks))
-    print()
-
-    count = 30000
-    count_inc = 300
-    a = 0.4
+    count = 500
+    count_inc = 280
+    a = 0.5
 
     getv1 = 0
     getv2 = 0
@@ -84,7 +70,6 @@ def process_video(path):
             getv1, getv2 = getv2, get_value(res)
             y = (1 - a) * getv1 + a * getv2
 
-
         if y > cur_max:
             cur_max = y
 
@@ -92,19 +77,10 @@ def process_video(path):
             frame_save.append(res)
             cur_max = 0
 
-        '''font = cv.FONT_HERSHEY_SIMPLEX
-        cv.putText(res, str(count // 30), (30, 60), font, 4, (255, 255, 255), 5, cv.LINE_AA)
-        cv.imshow('Res', cv.resize(res, (res.shape[1] // 2, res.shape[0] // 2)))
-        cv.waitKey(1)'''
 
         count += count_inc
 
-    print("frame_save is finish")
-    print("len frame_save ==", len(frame_save))
-    # cv.destroyAllWindows()
 
-
-    #create_pdf(frame_save)
     frame_save = [Image.fromarray(cv.cvtColor(img, cv.COLOR_BGR2RGB)) for img in frame_save]
     frame_save[0].save('static/save1.pdf', "PDF", resolution=100.0, save_all=True, append_images=frame_save[1:])
 
@@ -113,15 +89,9 @@ def get_value(frame):
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     canny = cv.Canny(gray, 50, 50)
     canny = cv.dilate(canny, kernel=np.ones((3, 3), dtype=np.uint8))
-    # cv2.imshow('canny', cv2.resize(canny, [canny.shape[1] // 2, canny.shape[0] // 2]))
     contours, _ = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_NONE)
 
     return len(contours)
-
-
-def create_pdf(images):
-    images = [Image.fromarray(cv.cvtColor(img, cv.COLOR_BGR2RGB)) for img in images]
-    images[0].save('static/save1.pdf', "PDF", resolution=100.0, save_all=True, append_images=images[1:])
 
 
 
