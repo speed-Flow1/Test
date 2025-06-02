@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Enter Your File</h2>
+        <form action="http://127.0.0.1:8000/upload" method="post" enctype="multipart/form-data">
+
+            <label for="file">Select Video:</label>
+            <input type="file" id="file" name="file" accept="video/*">
+
+            <br><br>
+
+            <input type="submit" value="Upload" class="btn">
+        </form>
+    </div>
+</body>
+</html>
